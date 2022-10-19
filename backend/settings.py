@@ -6,9 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-d)=_7o$$uv3h^s_=blf^s1ilci=nn6ycixx@7s9ix9sc(g2pjw"
 
-DEBUG = False
-
-ALLOWED_HOSTS = []
+DEBUG = True
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -27,12 +25,12 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # HEROKU STATIC FILES
+    # static files serverd with whitenoise
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # cross origin middleware
+    'corsheaders.middleware.CorsMiddleware',  # allow access from cross origin
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware', # csrf middleware removed
-    # authentication middleware
+    'django.middleware.csrf.CsrfViewMiddleware',  # remove as per API requirements
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -43,7 +41,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['app/template'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,7 +128,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Auth User Model
 AUTH_USER_MODEL = "app.User"
 
-
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
     "site_title": "Dashboard",
@@ -150,8 +147,8 @@ JAZZMIN_SETTINGS = {
     # CSS classes that are applied to the logo above
     "site_logo_classes": "img-circle",
 
+    # App list order
     "order_with_respect_to": ["app.user", "app.fuel", "app.payment", "app.machine", "app.creditor"],
-
 
     # Relative path to a favicon for your site, will default to site_logo if absent (ideally 32x32 px)
     "site_icon": None,
@@ -191,16 +188,13 @@ JAZZMIN_SETTINGS = {
     # Use modals instead of popups
     "related_modal_active": False,
 
-
     # Relative paths to custom CSS/JS scripts (must be present in static files)
     "custom_css": None,
     "custom_js": None,
 
-    "changeform_format": "horizontal_tabs",
     # override change forms on a per modeladmin basis
+    "changeform_format": "horizontal_tabs",
 
+    # theme overwrites
     "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
-    # Add a language dropdown into the admin
-    # "language_chooser": True,
-
 }

@@ -7,8 +7,17 @@ from .models import User, Fuel, Machine, Payment, Creditor
 class UserForm(forms.ModelForm):
     class Meta:
         widgets = {
-            'username': forms.NumberInput(attrs={'class': 'vTextField', 'minlength': 10}),
-            'password': forms.PasswordInput(attrs={'class': 'vTextField'}),
+            'username': forms.NumberInput(
+                attrs={
+                    'class': 'vTextField',
+                    'minlength': 10
+                }
+            ),
+            'password': forms.PasswordInput(
+                attrs={
+                    'class': 'vTextField'
+                }
+            ),
         }
 
     def save(self, commit=True):
@@ -22,9 +31,22 @@ class UserForm(forms.ModelForm):
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     form = UserForm
-    search_fields = ['name', 'username', 'authorisation']
-    fields = ['name', 'username', 'password', 'authorisation']
-    list_display = ['name', 'username',  'authorisation']
+    search_fields = [
+        'name',
+        'username',
+        'authorisation'
+    ]
+    fields = [
+        'name',
+        'username',
+        'password',
+        'authorisation'
+    ]
+    list_display = [
+        'name',
+        'username',
+        'authorisation'
+    ]
     list_per_page = 10
 
     def get_queryset(self, request):
@@ -37,15 +59,25 @@ class UserAdmin(admin.ModelAdmin):
 class FuelForm(forms.ModelForm):
     class Meta:
         widgets = {
-            'price': forms.NumberInput(attrs={'class': 'vTextField'}),
+            'price': forms.NumberInput(
+                attrs={
+                    'class': 'vTextField'
+                }
+            )
         }
 
 
 @admin.register(Fuel)
 class FuelAdmin(admin.ModelAdmin):
     form = FuelForm
-    search_fields = ['type', 'price']
-    list_display = ['type', 'price']
+    search_fields = [
+        'type',
+        'price'
+    ]
+    list_display = [
+        'type',
+        'price'
+    ]
     list_per_page = 10
 
 
@@ -53,15 +85,24 @@ class FuelAdmin(admin.ModelAdmin):
 class PaymentForm(forms.ModelForm):
     class Meta:
         widgets = {
-            'allowed_subcategory': forms.CheckboxInput(attrs={'style':'border:none; outline:none; height:14px; width:14px;'})
+            'allowed_subcategory': forms.CheckboxInput(
+                attrs={
+                    'style': 'border:none; outline:none; height:14px; width:14px;'
+                }
+            )
         }
 
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     form = PaymentForm
-    search_fields = ['mode']
-    list_display = ['mode', 'allowed_subcategory']
+    search_fields = [
+        'mode'
+    ]
+    list_display = [
+        'mode',
+        'allowed_subcategory'
+    ]
     list_per_page = 10
 
 
@@ -69,16 +110,32 @@ class PaymentAdmin(admin.ModelAdmin):
 class MachineForm(forms.ModelForm):
     class Meta:
         widgets = {
-            'fuel': forms.Select(attrs={'class': 'vTextField'}),
-            'reading': forms.NumberInput(attrs={'class': 'vTextField'}),
+            'fuel': forms.Select(
+                attrs={
+                    'class': 'vTextField'
+                }
+            ),
+            'reading': forms.NumberInput(
+                attrs={
+                    'class': 'vTextField'
+                }
+            )
         }
 
 
 @admin.register(Machine)
 class MachineAdmin(admin.ModelAdmin):
     form = MachineForm
-    search_fields = ['name', 'fuel', 'reading']
-    list_display = ['name', 'fuel', 'reading']
+    search_fields = [
+        'name',
+        'fuel',
+        'reading'
+    ]
+    list_display = [
+        'name',
+        'fuel',
+        'reading'
+    ]
     list_per_page = 10
 
 
@@ -86,14 +143,27 @@ class MachineAdmin(admin.ModelAdmin):
 class CreditorForm(forms.ModelForm):
     class Meta:
         widgets = {
-            'payment': forms.Select(attrs={'class': 'vTextField'}),
+            'payment': forms.Select(
+                attrs={
+                    'class': 'vTextField'
+                }
+            )
         }
 
 
 @admin.register(Creditor)
 class CreditorAdmin(admin.ModelAdmin):
     form = CreditorForm
-    search_fields = ['payment__mode', 'name',
-                     'limit_warning', 'limit_stop_credit']
-    list_display = ['payment', 'name', 'limit_warning', 'limit_stop_credit']
+    search_fields = [
+        'payment__mode',
+        'name',
+        'limit_warning',
+        'limit_stop_credit'
+    ]
+    list_display = [
+        'payment',
+        'name',
+        'limit_warning',
+        'limit_stop_credit'
+    ]
     list_per_page = 10

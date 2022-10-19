@@ -1,7 +1,6 @@
 import logging
 from typing import List, Union, Dict, Set, Callable, Any
 from urllib.parse import urlencode
-
 from django.apps import apps
 from django.contrib.admin import ListFilter
 from django.contrib.admin.helpers import AdminForm
@@ -45,7 +44,8 @@ def get_admin_url(instance: Any, admin_site: str = "admin", from_app: bool = Fal
             app_label, model_name = instance.split(".")
             model_name = model_name.lower()
             url = reverse(
-                "admin:{app_label}_{model_name}_changelist".format(app_label=app_label, model_name=model_name),
+                "admin:{app_label}_{model_name}_changelist".format(
+                    app_label=app_label, model_name=model_name),
                 current_app=admin_site,
             )
 
@@ -53,7 +53,8 @@ def get_admin_url(instance: Any, admin_site: str = "admin", from_app: bool = Fal
         elif instance.__class__ == ModelBase:
             app_label, model_name = instance._meta.app_label, instance._meta.model_name
             url = reverse(
-                "admin:{app_label}_{model_name}_changelist".format(app_label=app_label, model_name=model_name),
+                "admin:{app_label}_{model_name}_changelist".format(
+                    app_label=app_label, model_name=model_name),
                 current_app=admin_site,
             )
 
@@ -61,7 +62,8 @@ def get_admin_url(instance: Any, admin_site: str = "admin", from_app: bool = Fal
         elif instance.__class__.__class__ == ModelBase and isinstance(instance, instance.__class__):
             app_label, model_name = instance._meta.app_label, instance._meta.model_name
             url = reverse(
-                "admin:{app_label}_{model_name}_change".format(app_label=app_label, model_name=model_name),
+                "admin:{app_label}_{model_name}_change".format(
+                    app_label=app_label, model_name=model_name),
                 args=(instance.pk,),
                 current_app=admin_site,
             )
@@ -69,7 +71,8 @@ def get_admin_url(instance: Any, admin_site: str = "admin", from_app: bool = Fal
     except (NoReverseMatch, ValueError):
         # If we are not walking through the models within an app, let the user know this url cant be reversed
         if not from_app:
-            logger.warning(gettext("Could not reverse url from {instance}".format(instance=instance)))
+            logger.warning(
+                gettext("Could not reverse url from {instance}".format(instance=instance)))
 
     if kwargs:
         url += "?{params}".format(params=urlencode(kwargs))
@@ -148,7 +151,8 @@ def get_view_permissions(user: AbstractUser) -> Set[str]:
     lower_perms = []
     for perm in perms:
         app, perm_codename = perm.split(".")
-        lower_perms.append("{app}.{perm_codename}".format(app=app, perm_codename=perm_codename.lower()))
+        lower_perms.append("{app}.{perm_codename}".format(
+            app=app, perm_codename=perm_codename.lower()))
     return {x.replace("view_", "") for x in lower_perms if "view" in x or "change" in x}
 
 
@@ -192,7 +196,8 @@ def make_menu(
 
             _meta = get_model_meta(link["model"])
 
-            name = _meta.verbose_name_plural.title() if _meta else link["model"]
+            name = _meta.verbose_name_plural.title(
+            ) if _meta else link["model"]
             menu.append(
                 {
                     "name": name,
@@ -206,7 +211,8 @@ def make_menu(
         # App links
         elif "app" in link and allow_appmenus:
             children = [
-                {"name": child.get("verbose_name", child["name"]), "url": child["url"], "children": None}
+                {"name": child.get(
+                    "verbose_name", child["name"]), "url": child["url"], "children": None}
                 for child in get_app_admin_urls(link["app"], admin_site=admin_site)
                 if child["model"] in model_permissions
             ]

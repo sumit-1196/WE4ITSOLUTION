@@ -4,7 +4,6 @@ import json
 import logging
 import urllib.parse
 from typing import Any, Callable, Dict, List, Optional, Union
-
 from django.conf import settings
 from django.contrib.admin import ListFilter
 from django.contrib.admin.helpers import AdminForm, Fieldset, InlineAdminFormSet
@@ -61,27 +60,32 @@ def get_side_menu(context: Context, using: str = "available_apps") -> List[Dict]
     for app in available_apps:
         app_label = app["app_label"].lower()
         app_custom_links = custom_links.get(app_label, [])
-        app["icon"] = options["icons"].get(app_label, options["default_icon_parents"])
+        app["icon"] = options["icons"].get(
+            app_label, options["default_icon_parents"])
         if app_label in options["hide_apps"]:
             continue
 
         menu_items = []
         for model in app.get("models", []):
-            model_str = "{app_label}.{model}".format(app_label=app_label, model=model["object_name"]).lower()
+            model_str = "{app_label}.{model}".format(
+                app_label=app_label, model=model["object_name"]).lower()
             if model_str in options.get("hide_models", []):
                 continue
 
             model["url"] = model["admin_url"]
             model["model_str"] = model_str
-            model["icon"] = options["icons"].get(model_str, options["default_icon_children"])
+            model["icon"] = options["icons"].get(
+                model_str, options["default_icon_children"])
             menu_items.append(model)
 
         menu_items.extend(app_custom_links)
 
-        custom_link_names = [x.get("name", "").lower() for x in app_custom_links]
+        custom_link_names = [x.get("name", "").lower()
+                             for x in app_custom_links]
         model_ordering = list(
             filter(
-                lambda x: x.lower().startswith("{}.".format(app_label)) or x.lower() in custom_link_names,
+                lambda x: x.lower().startswith("{}.".format(app_label)
+                                               ) or x.lower() in custom_link_names,
                 ordering,
             )
         )
@@ -91,14 +95,16 @@ def get_side_menu(context: Context, using: str = "available_apps") -> List[Dict]
                 menu_items = order_with_respect_to(
                     menu_items,
                     model_ordering,
-                    getter=lambda x: x.get("model_str", x.get("name", "").lower()),
+                    getter=lambda x: x.get(
+                        "model_str", x.get("name", "").lower()),
                 )
             app["models"] = menu_items
             menu.append(app)
 
     if ordering:
         apps_order = list(filter(lambda x: "." not in x, ordering))
-        menu = order_with_respect_to(menu, apps_order, getter=lambda x: x["app_label"].lower())
+        menu = order_with_respect_to(
+            menu, apps_order, getter=lambda x: x["app_label"].lower())
 
     return menu
 
@@ -129,7 +135,8 @@ def get_jazzmin_settings(request: WSGIRequest) -> Dict:
     settings = get_settings()
 
     if hasattr(request, "current_app"):
-        admin_site = {x.name: x for x in all_sites}.get(request.current_app, "admin")
+        admin_site = {x.name: x for x in all_sites}.get(
+            request.current_app, "admin")
         if not settings["site_title"]:
             settings["site_title"] = admin_site.site_title
 
@@ -169,7 +176,8 @@ def get_user_avatar(user: AbstractUser) -> str:
     """
     no_avatar = static("vendor/adminlte/img/user2-160x160.jpg")
     options = get_settings()
-    avatar_field_name: Optional[Union[str, Callable]] = options.get("user_avatar")
+    avatar_field_name: Optional[Union[str, Callable]
+                                ] = options.get("user_avatar")
 
     if not avatar_field_name:
         return no_avatar
@@ -187,7 +195,8 @@ def get_user_avatar(user: AbstractUser) -> str:
         elif callable(avatar_field):
             return avatar_field()
 
-    logger.warning("avatar field must be an ImageField/URLField on the user model, or a callable")
+    logger.warning(
+        "avatar field must be an ImageField/URLField on the user model, or a callable")
 
     return no_avatar
 
@@ -204,7 +213,8 @@ def jazzmin_paginator_number(change_list: ChangeList, i: int) -> SafeText:
     current_page = i == change_list.page_num
 
     if start:
-        link = change_list.get_query_string({PAGE_VAR: change_list.page_num - 1}) if change_list.page_num > 1 else "#"
+        link = change_list.get_query_string(
+            {PAGE_VAR: change_list.page_num - 1}) if change_list.page_num > 1 else "#"
         html_str += """
         <li class="page-item previous {disabled}">
             <a class="page-link" href="{link}" data-dt-idx="0" tabindex="0">«</a>
@@ -239,7 +249,8 @@ def jazzmin_paginator_number(change_list: ChangeList, i: int) -> SafeText:
         )
 
     if end:
-        link = change_list.get_query_string({PAGE_VAR: change_list.page_num + 1}) if change_list.page_num < i else "#"
+        link = change_list.get_query_string(
+            {PAGE_VAR: change_list.page_num + 1}) if change_list.page_num < i else "#"
         html_str += """
         <li class="page-item next {disabled}">
             <a class="page-link" href="{link}" data-dt-idx="7" tabindex="0">»</a>
@@ -256,7 +267,8 @@ def admin_extra_filters(cl: ChangeList) -> Dict:
     """
     Return the dict of used filters which is not included in list_filters form
     """
-    used_parameters = list(itertools.chain(*(s.used_parameters.keys() for s in cl.filter_specs)))
+    used_parameters = list(itertools.chain(
+        *(s.used_parameters.keys() for s in cl.filter_specs)))
     return dict((k, v) for k, v in cl.params.items() if k not in used_parameters)
 
 
@@ -382,7 +394,8 @@ def get_changeform_template(adminform: AdminForm) -> str:
     inlines = adminform.model_admin.inlines
     has_inlines = inlines and len(inlines) > 0
     model = adminform.model_admin.model
-    model_name = "{}.{}".format(model._meta.app_label, model._meta.model_name).lower()
+    model_name = "{}.{}".format(
+        model._meta.app_label, model._meta.model_name).lower()
 
     changeform_format = options.get("changeform_format", "")
     if model_name in options.get("changeform_format_overrides", {}):
@@ -490,25 +503,33 @@ def action_message_to_list(action: LogEntry) -> List[Dict]:
         for sub_message in change_message:
             if "added" in sub_message:
                 if sub_message["added"]:
-                    sub_message["added"]["name"] = gettext(sub_message["added"]["name"])
-                    messages.append(added(gettext("Added {name} “{object}”.").format(**sub_message["added"])))
+                    sub_message["added"]["name"] = gettext(
+                        sub_message["added"]["name"])
+                    messages.append(
+                        added(gettext("Added {name} “{object}”.").format(**sub_message["added"])))
                 else:
                     messages.append(added(gettext("Added.")))
 
             elif "changed" in sub_message:
                 sub_message["changed"]["fields"] = get_text_list(
-                    [gettext(field_name) for field_name in sub_message["changed"]["fields"]],
+                    [gettext(field_name)
+                     for field_name in sub_message["changed"]["fields"]],
                     gettext("and"),
                 )
                 if "name" in sub_message["changed"]:
-                    sub_message["changed"]["name"] = gettext(sub_message["changed"]["name"])
-                    messages.append(changed(gettext("Changed {fields}.").format(**sub_message["changed"])))
+                    sub_message["changed"]["name"] = gettext(
+                        sub_message["changed"]["name"])
+                    messages.append(
+                        changed(gettext("Changed {fields}.").format(**sub_message["changed"])))
                 else:
-                    messages.append(changed(gettext("Changed {fields}.").format(**sub_message["changed"])))
+                    messages.append(
+                        changed(gettext("Changed {fields}.").format(**sub_message["changed"])))
 
             elif "deleted" in sub_message:
-                sub_message["deleted"]["name"] = gettext(sub_message["deleted"]["name"])
-                messages.append(deleted(gettext("Deleted “{object}”.").format(**sub_message["deleted"])))
+                sub_message["deleted"]["name"] = gettext(
+                    sub_message["deleted"]["name"])
+                messages.append(
+                    deleted(gettext("Deleted “{object}”.").format(**sub_message["deleted"])))
 
     return messages if len(messages) else [changed(gettext(action.change_message))]
 
@@ -533,3 +554,19 @@ def style_bold_first_word(message: str) -> SafeText:
 @register.filter
 def unicode_slugify(message: str) -> str:
     return slugify(message, allow_unicode=True)
+
+
+@register.simple_tag
+def get_custom_menu():
+    return [
+        {
+            'name': 'Others',
+            'models': [
+                {
+                    'name': 'Report',
+                    'icon': 'fas fa-circle',
+                    'url': '/admin/app/report/'
+                }
+            ]
+        }
+    ]

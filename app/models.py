@@ -1,9 +1,8 @@
-from email.policy import default
-from enum import unique
-from hashlib import blake2b
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
+
+# USER SCHEMA
 
 
 class UserAccountManager(BaseUserManager):
@@ -29,7 +28,10 @@ class UserAccountManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=100)
     username = models.CharField(
-        max_length=10, unique=True, verbose_name="Mobile no.")
+        max_length=10,
+        unique=True,
+        verbose_name="Mobile no."
+    )
     authorisation = models.CharField(max_length=100)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -45,39 +47,72 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.name
 
+# FUEL SCHEMA
+
 
 class Fuel(models.Model):
-    type = models.CharField(max_length=100, null=False,
-                            blank=False, unique=True)
+    type = models.CharField(
+        max_length=100,
+        null=False,
+        blank=False, unique=True
+    )
     price = models.FloatField(null=False, blank=False)
 
     def __str__(self):
         return self.type
 
 
+# MACHINE SCHEMA
+
 class Machine(models.Model):
     fuel = models.ForeignKey(Fuel, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, null=False, blank=False)
-    reading = models.FloatField(null=False, blank=False)
+    name = models.CharField(
+        max_length=100,
+        null=False,
+        blank=False
+    )
+    reading = models.FloatField(
+        null=False,
+        blank=False
+    )
 
     def __str__(self):
         return self.name
 
+# PAYMENT SCHEMA
+
 
 class Payment(models.Model):
     allowed_subcategory = models.BooleanField(default=False)
-    mode = models.CharField(max_length=100, null=False, blank=False)
+    mode = models.CharField(
+        max_length=100,
+        null=False,
+        blank=False
+    )
 
     def __str__(self):
         return self.mode
 
 
+# CREDITOR SCHEMA
+
 class Creditor(models.Model):
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, null=False, blank=False)
-    limit_warning = models.CharField(max_length=100, null=False, blank=False)
+    name = models.CharField(
+        max_length=100,
+        null=False,
+        blank=False
+    )
+    limit_warning = models.CharField(
+        max_length=100,
+        null=False,
+        blank=False
+    )
     limit_stop_credit = models.CharField(
-        max_length=100, null=False, blank=False)
+        max_length=100,
+        null=False,
+        blank=False
+    )
 
     def __str__(self):
         return self.name
